@@ -17,7 +17,7 @@ var gulp = require('gulp'),
 
 // 1. Webserver
 gulp.task('webserver', function () {
-	gulp.src('dist/')
+	gulp.src('src/')
 	.pipe(webserver({
 		livereload: true,
 		port: '8080'
@@ -26,7 +26,7 @@ gulp.task('webserver', function () {
 
 // 2. SASS Minification and conversion to CSS
 gulp.task('styles', function () {
-    gulp.src('app/assets/styles/*.scss')
+    gulp.src('src/app/assets/styles/*.scss')
 	.pipe(sass())
         .pipe(prefix("last 1 version", "> 1%", "ie 8", "ie 7"))
         .pipe(minifyCSS())
@@ -37,8 +37,7 @@ gulp.task('styles', function () {
 // 3. JS Minificaiton and concatination
 gulp.task('scripts', function () {
 	gulp.src([
-			'app/components/jquery/dist/jquery.js',
-			'app/scripts/*.js'
+			'src/app/assets/*.js'
 		])
 		.pipe(concat("script.min.js"))
 		.pipe(uglify())
@@ -48,14 +47,14 @@ gulp.task('scripts', function () {
 // 4. HTML Minification
 gulp.task('html', function () {
 	var opts = {comments:true,spare:true};
-	gulp.src('app/**/*.html')
+	gulp.src('src/app/**/*.html')
 	.pipe(minifyHTML(opts))
 	.pipe(gulp.dest('dist/'))
 });
 
 // 5. Minify PNG, JPEG, GIF and SVG images
 gulp.task('images', function () {
-    return gulp.src('app/assets/img/**/*')
+    return gulp.src('src/app/assets/img/**/*')
         .pipe(imagemin({
             progressive: true,
             svgoPlugins: [{removeViewBox: false}],
@@ -66,23 +65,23 @@ gulp.task('images', function () {
 
 // 6. Copying the fonts from 'app' to 'dest'
 gulp.task('fonts', function () {
-	return gulp.src(['app/assets/fonts/*'])
+	return gulp.src(['src/app/assets/fonts/*'])
 	.pipe(gulp.dest('dist/assets/fonts'))
 });
 
 // 7. Copying bower components if you have them from 'app' to 'dest' **optional**
 gulp.task('components', function () {
-	return gulp.src(['app/components/**/*'])
+	return gulp.src(['src/app/components/**/*'])
 	.pipe(gulp.dest('dist/components'))
 });
 
-// 8. Copying all the other files from 'app' to 'dest'
+// 8. Copying all the other files from 'src' to 'dist'
 gulp.task('copy', function () {
 	  return gulp.src([
-	    'app/*',
-	    '!app/*.html', //needed for html minification
-	    '!app/components', //add 'components to default task if you want it copied over'
-	    '!app/Gemfile'
+	    'src/app/*',
+	    '!src/app/*.html', //needed for html minification
+	    '!src/app/components', //add 'components to default task if you want it copied over'
+	    '!src/app/Gemfile'
 	  ], {
 	    dot: true
 	}).pipe(gulp.dest('dist'));
@@ -93,7 +92,7 @@ gulp.task('copy', function () {
 gulp.task('uncss', function () {
     return gulp.src('dist/assets/styles/style.min.css')
         .pipe(uncss({
-            html: ['app/index.html']
+            html: ['src/index.html']
         }))
 		.pipe(minifyCSS())
         .pipe(gulp.dest('dist/assets/styles/'));
@@ -101,10 +100,10 @@ gulp.task('uncss', function () {
 
 // Watching files for changes
 gulp.task('watch', function () {
-	gulp.watch('app/assets/styles/*.scss', ['styles']);
-	gulp.watch('app/scripts/*.js', ['scripts']);
-	gulp.watch('app/assets/img/**/*', ['images']);
-	gulp.watch('app/**/*.html', ['html']);
+	gulp.watch('src/app/assets/styles/*.scss', ['styles']);
+	gulp.watch('src/app/scripts/*.js', ['scripts']);
+	gulp.watch('src/app/assets/img/**/*', ['images']);
+	gulp.watch('src/app/**/*.html', ['html']);
 });
 
 
