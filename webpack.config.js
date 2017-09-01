@@ -1,5 +1,16 @@
 const path = require('path');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
+
+let htmlOptions = {
+  template: 'src/index.html',
+  hash: true,
+  minify: {
+    collapseWitespace: true
+  }
+};
 
 module.exports = {
   entry: './src/app/app.js',
@@ -12,32 +23,67 @@ module.exports = {
      * rules needs to be Array []
      */
     rules: [
-      {
-        test: /\.css$/,
-        /**
+      // {
+      //   test: /\.css$/,
+      /**
          * Reads from right to left
          * css-loader - interprets @import and url() like import/require()
          * style-loader - CSS to DOM with <style>
          */
-        // use: [
-        //   'style-loader',
-        //   {
-        //     loader: 'css-loader',
-        //     options: {
-        //       minimize: true
-        //     }
-        //   }
-        // ]
+      // use: [
+      //   'style-loader',
+      //   {
+      //     loader: 'css-loader',
+      //     options: {
+      //       minimize: true
+      //     }
+      //   }
+      // ]
+      /**
+         * Load minimised vanilla CSS file to html
+         * css-loader
+         */
+      // use: ExtractTextPlugin.extract({
+      //   use: [{
+      //     loader: 'css-loader',
+      //     options: {
+      //       minimize: true
+      //     }
+      //   }]
+      // })
+      // },
+      {
+        test: /\.scss$/,
         use: ExtractTextPlugin.extract({
-          use: ['css-loader']
+          use: [
+            {
+              loader: 'css-loader',
+              options: {
+                minimize: true
+              }
+            },
+            'sass-loader'
+          ]
         })
+      },
+      {
+        test: /\.(jpe?g|png|gif|svg)$/i,
+        loaders: [
+          'file-loader?hash=sha512&digest=hex&name=[hash].[ext]',
+          'image-webpack-loader?bypassOnDebug&optimizationLevel=7&interlaced=false'
+        ]
       }
     ]
   },
   /**
    * plugins needs to be Array []
    */
-  plugins: [new ExtractTextPlugin('styles.css')],
+  plugins: [
+    new UglifyJSPlugin(),
+    new ExtractTextPlugin('vanilla.css'),
+    new HtmlWebpackPlugin(htmlOptions),
+    new CleanWebpackPlugin(['dist'])
+  ],
   /**
    * webpack-dev-server
    */
