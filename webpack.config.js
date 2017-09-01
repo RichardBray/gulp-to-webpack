@@ -44,12 +44,12 @@ module.exports = {
          * css-loader
          */
       // use: ExtractTextPlugin.extract({
-      //   use: [{
+      //   use: {
       //     loader: 'css-loader',
       //     options: {
       //       minimize: true
       //     }
-      //   }]
+      //   }
       // })
       // },
       {
@@ -67,10 +67,14 @@ module.exports = {
         })
       },
       {
-        test: /\.(jpe?g|png|gif|svg)$/i,
-        loaders: [
-          'file-loader?hash=sha512&digest=hex&name=[hash].[ext]',
-          'image-webpack-loader?bypassOnDebug&optimizationLevel=7&interlaced=false'
+        test: /\.(jpeg|png|gif|svg)$/,
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              name: '[name][hash].[ext]'
+            }
+          }, 'image-webpack-loader'
         ]
       }
     ]
