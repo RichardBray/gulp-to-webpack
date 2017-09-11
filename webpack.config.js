@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
@@ -6,9 +7,9 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 
 let htmlOptions = {
   template: 'src/index.html',
-  hash: true,
   minify: {
-    collapseWitespace: true
+    collapseWhitespace: true,
+    removeAttributeQuotes: true
   }
 };
 
@@ -23,8 +24,8 @@ module.exports = {
      * rules needs to be Array []
      */
     rules: [
-      // {
-      //   test: /\.css$/,
+    //   {
+    //     test: /\.css$/,
       /**
          * Reads from right to left
          * css-loader - interprets @import and url() like import/require()
@@ -44,12 +45,7 @@ module.exports = {
          * css-loader
          */
       // use: ExtractTextPlugin.extract({
-      //   use: {
-      //     loader: 'css-loader',
-      //     options: {
-      //       minimize: true
-      //     }
-      //   }
+      //   use: ['css-loader']
       // })
       // },
       {
@@ -72,7 +68,7 @@ module.exports = {
           {
             loader: 'file-loader',
             options: {
-              name: '[name][hash].[ext]'
+              name: '[name].[ext]'
             }
           }, 'image-webpack-loader'
         ]
@@ -86,13 +82,13 @@ module.exports = {
     new UglifyJSPlugin(),
     new ExtractTextPlugin('vanilla.css'),
     new HtmlWebpackPlugin(htmlOptions),
-    new CleanWebpackPlugin(['dist'])
+    new CleanWebpackPlugin(['dist']),
+    new webpack.optimize.ModuleConcatenationPlugin()
   ],
   /**
    * webpack-dev-server
    */
   devServer: {
-    contentBase: './src',
-    port: 3000
+    contentBase: './src'
   }
 };

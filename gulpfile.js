@@ -3,7 +3,6 @@
 var gulp = require('gulp'),
   gutil = require('gulp-util'),
   sass = require('gulp-ruby-sass'),
-  prefix = require('gulp-autoprefixer'),
   minifyCSS = require('gulp-minify-css'),
   concat = require('gulp-concat'),
   webserver = require('gulp-webserver'),
@@ -12,7 +11,6 @@ var gulp = require('gulp'),
   minifyHTML = require('gulp-minify-html'),
   imagemin = require('gulp-imagemin'),
   pngcrush = require('imagemin-pngcrush'),
-  uncss = require('gulp-uncss');
 
 // 1. Webserver
 gulp.task('webserver', function() {
@@ -29,7 +27,6 @@ gulp.task('styles', function() {
   gulp
     .src('src/app/assets/styles/*.scss')
     .pipe(sass())
-    .pipe(prefix('last 1 version', '> 1%', 'ie 8', 'ie 7'))
     .pipe(minifyCSS())
     .pipe(rename({ suffix: '.min' }))
     .pipe(gulp.dest('dist/assets/styles'));
@@ -64,50 +61,6 @@ gulp.task('images', function() {
     .pipe(gulp.dest('dist/assets/img'));
 });
 
-// 6. Copying the fonts from 'app' to 'dest'
-gulp.task('fonts', function() {
-  return gulp
-    .src(['src/app/assets/fonts/*'])
-    .pipe(gulp.dest('dist/assets/fonts'));
-});
-
-// 7. Copying bower components if you have them from 'app' to 'dest' **optional**
-gulp.task('components', function() {
-  return gulp
-    .src(['src/app/components/**/*'])
-    .pipe(gulp.dest('dist/components'));
-});
-
-// 8. Copying all the other files from 'src' to 'dist'
-gulp.task('copy', function() {
-  return gulp
-    .src(
-      [
-        'src/app/*',
-        '!src/app/*.html', //needed for html minification
-        '!src/app/components', //add 'components to default task if you want it copied over'
-        '!src/app/Gemfile'
-      ],
-      {
-        dot: true
-      }
-    )
-    .pipe(gulp.dest('dist'));
-});
-
-// 9. Removing the unused classes in your css **optional**
-gulp.task('uncss', function() {
-  return gulp
-    .src('dist/assets/styles/style.min.css')
-    .pipe(
-      uncss({
-        html: ['src/index.html']
-      })
-    )
-    .pipe(minifyCSS())
-    .pipe(gulp.dest('dist/assets/styles/'));
-});
-
 // Watching files for changes
 gulp.task('watch', function() {
   gulp.watch('src/app/assets/styles/*.scss', ['styles']);
@@ -117,13 +70,10 @@ gulp.task('watch', function() {
 });
 
 gulp.task('default', [
-  'copy',
   'html',
   'styles',
-  'fonts',
   'scripts',
   'images',
   'watch',
   'webserver'
 ]);
-gulp.task('chkcss', ['uncss', 'webserver']); //checks if uncss worked
