@@ -1,8 +1,8 @@
-#Moving from gulp to webpack
+# Moving from gulp to webpack
 
 This repo is just me turning one of my old gulp files to webpack for the lols
 
-##Install
+## Install
 
 Install dependencies
 `$ npm i`
